@@ -2,10 +2,13 @@ import { Router } from 'express';
 import authMiddleware from './app/middleware/auth';
 
 import StatusController from './app/controllers/StatusController';
+import ItemController from './app/controllers/ItemController';
 
 const routes = Router();
 
 routes.get(['', '/', '/status'], StatusController.status);
+
+routes.get('/items', ItemController.index);
 
 routes.use(authMiddleware);
 

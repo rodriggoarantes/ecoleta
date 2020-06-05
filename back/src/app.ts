@@ -3,6 +3,7 @@ import 'dotenv/config';
 import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 
 import 'express-async-errors';
 
@@ -23,9 +24,13 @@ export default class App {
   }
 
   private middlewares() {
-    // CORS
     this.server.use(cors());
     this.server.use(express.json());
+
+    this.server.use(
+      '/uploads',
+      express.static(path.resolve(__dirname, '..', 'uploads'))
+    );
   }
 
   private routes() {
