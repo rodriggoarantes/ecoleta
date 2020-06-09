@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
@@ -21,9 +21,17 @@ interface State {
   uf: string;
 }
 
+interface City {
+  id: number;
+  name: string;
+}
+
 const CreatePoint: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [states, setStates] = useState<State[]>([]);
+  const [cities, setCities] = useState<City[]>([]);
+  const [selectedUf, setSelectedUf] = useState<number>(0);
+  const [selectedCity, setSelectedCity] = useState<number>(0);
 
   useEffect(() => {
     api.get('items').then((response) => {
@@ -36,6 +44,26 @@ const CreatePoint: React.FC = () => {
       setStates((response && response.data) || []);
     });
   }, []);
+
+  useEffect(() => {
+    if (selectedUf == 0) {
+      setCities([]);
+      return;
+    }
+    api.get(`cities/states/${selectedUf}`).then((response) => {
+      setCities((response && response.data) || []);
+    });
+  }, [selectedUf]);
+
+  const handleSelectState = (event: ChangeEvent<HTMLSelectElement>) => {
+    const uf = event.target.value;
+    setSelectedUf(Number(uf));
+  };
+
+  const handleSelectCity = (event: ChangeEvent<HTMLSelectElement>) => {
+    const city = event.target.value;
+    setSelectedCity(Number(city));
+  };
 
   return (
     <div id="page-create-point">
@@ -91,7 +119,12 @@ const CreatePoint: React.FC = () => {
           <div className="field-group">
             <div className="field">
               <label htmlFor="estado">Estado (UF)</label>
-              <select name="estado" id="estado">
+              <select
+                name="estado"
+                id="estado"
+                value={selectedUf}
+                onChange={handleSelectState}
+              >
                 <option value="0">Selecione uma UF</option>
                 {states.map((state) => (
                   <option key={state.id} value={state.id}>
@@ -103,8 +136,18 @@ const CreatePoint: React.FC = () => {
 
             <div className="field">
               <label htmlFor="cidade">Cidade</label>
-              <select name="cidade" id="cidade">
+              <select
+                name="cidade"
+                id="cidade"
+                value={selectedCity}
+                onChange={handleSelectCity}
+              >
                 <option value="0">Selecione uma cidade</option>
+                {cities.map((city: City) => (
+                  <option key={city.id} value={city.id}>
+                    {city.name}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
