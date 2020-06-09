@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 
-import knex from '../../database/connection';
+import itemService from './../domain/items/ItemService';
 
 class ItemController {
   async index(_: Request, res: Response) {
-    const items = await knex('items').select('*');
-    return res.json(items);
+    const list = await itemService.list();
+    return res.json(list);
   }
 }
 

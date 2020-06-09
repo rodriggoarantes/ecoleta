@@ -10,8 +10,8 @@ import 'express-async-errors';
 import routes from './routes';
 
 export default class App {
-  public server: express.Application;
-  public port: number = 3333;
+  private server: express.Application;
+  private readonly port: number = 3333;
 
   constructor() {
     dotenv.config();
@@ -47,7 +47,7 @@ export default class App {
       ) => {
         return res.status(500).json({
           message: 'Erro interno não esperado',
-          error: JSON.stringify(err),
+          error: err,
         });
       }
     );
@@ -55,9 +55,14 @@ export default class App {
 
   private database() {}
 
-  public listen() {
+  public listen(): App {
     this.server.listen(this.port, () => {
       console.log(`App listening on the http://localhost:${this.port}`);
     });
+    return this;
+  }
+
+  public getServer(): express.Application {
+    return this.server;
   }
 }

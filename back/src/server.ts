@@ -1,6 +1,6 @@
 import App from './app';
 
 const app = new App();
-app.listen();
+const server = app.listen().getServer();
 
-export default app.server;
+export default server;

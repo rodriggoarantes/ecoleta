@@ -9,8 +9,7 @@ export const up = async (knex: Knex) => {
     table.string('whatsapp').notNullable();
     table.decimal('latitude').notNullable();
     table.decimal('longitude').notNullable();
-    table.string('city').notNullable();
-    table.string('uf', 2).notNullable();
+    table.integer('city').notNullable();
   });
 };
 
