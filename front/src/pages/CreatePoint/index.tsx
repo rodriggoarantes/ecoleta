@@ -1,13 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
+
+import api from './../../services/api';
 
 import './styles.css';
 
 import Header from './../../components/Header';
 
+interface Item {
+  id: number;
+  title: string;
+  url: string;
+  selected?: boolean;
+}
+
+interface State {
+  id: number;
+  uf: string;
+}
+
 const CreatePoint: React.FC = () => {
+  const [items, setItems] = useState<Item[]>([]);
+  const [states, setStates] = useState<State[]>([]);
+
+  useEffect(() => {
+    api.get('items').then((response) => {
+      setItems((response && response.data) || []);
+    });
+  }, []);
+
+  useEffect(() => {
+    api.get('states').then((response) => {
+      setStates((response && response.data) || []);
+    });
+  }, []);
+
   return (
     <div id="page-create-point">
       <Header>
@@ -64,6 +93,11 @@ const CreatePoint: React.FC = () => {
               <label htmlFor="estado">Estado (UF)</label>
               <select name="estado" id="estado">
                 <option value="0">Selecione uma UF</option>
+                {states.map((state) => (
+                  <option key={state.id} value={state.id}>
+                    {state.uf}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -83,30 +117,12 @@ const CreatePoint: React.FC = () => {
           </legend>
 
           <ul className="items-grid">
-            <li className="selected">
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="oleo" />
-              <span>Óleo de cozinha</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="oleo" />
-              <span>Óleo de cozinha</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="oleo" />
-              <span>Óleo de cozinha</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="oleo" />
-              <span>Óleo de cozinha</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="oleo" />
-              <span>Óleo de cozinha</span>
-            </li>
-            <li>
-              <img src="http://localhost:3333/uploads/oleo.svg" alt="oleo" />
-              <span>Óleo de cozinha</span>
-            </li>
+            {items.map((item: Item) => (
+              <li key={item.id} className={item.selected ? 'selected' : ''}>
+                <img src={item.url} alt={item.title} />
+                <span>{item.title}</span>
+              </li>
+            ))}
           </ul>
         </fieldset>
 

@@ -10,7 +10,7 @@ class ItemService {
     return items.map((item) => {
       return <Item>{
         ...item,
-        url: `${url}/${item.image}`,
+        url: `${url}/uploads/${item.image}`,
       };
     });
   }
