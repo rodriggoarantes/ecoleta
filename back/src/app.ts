@@ -7,11 +7,12 @@ import path from 'path';
 
 import 'express-async-errors';
 
+import errorHandler from './app/middleware/error';
 import routes from './routes';
 
 export default class App {
   private server: express.Application;
-  private readonly port: number = 3333;
+  private readonly port = process.env.PORT || '3333';
 
   constructor() {
     dotenv.config();
@@ -38,19 +39,7 @@ export default class App {
   }
 
   private exceptionHandler() {
-    this.server.use(
-      async (
-        err: express.ErrorRequestHandler,
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-      ) => {
-        return res.status(500).json({
-          message: 'Erro interno não esperado',
-          error: err,
-        });
-      }
-    );
+    this.server.use(errorHandler);
   }
 
   private database() {}

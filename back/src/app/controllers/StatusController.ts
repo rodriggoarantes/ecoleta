@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import HttpException from '../domain/infra/HttpException';
 
 class StatusController {
   async status(_: Request, res: Response) {
