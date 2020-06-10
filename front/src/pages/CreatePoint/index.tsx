@@ -1,7 +1,8 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { FiArrowLeft } from 'react-icons/fi';
 import { Map, TileLayer, Marker } from 'react-leaflet';
+import { LeafletMouseEvent, LatLngTuple } from 'leaflet';
 
 import api from './../../services/api';
 
@@ -27,11 +28,23 @@ interface City {
 }
 
 const CreatePoint: React.FC = () => {
+  const history = useHistory();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    whatsapp: '',
+  });
   const [items, setItems] = useState<Item[]>([]);
   const [states, setStates] = useState<State[]>([]);
   const [cities, setCities] = useState<City[]>([]);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [selectedUf, setSelectedUf] = useState<number>(0);
   const [selectedCity, setSelectedCity] = useState<number>(0);
+  const [selectedPosition, setSelectedPosition] = useState<LatLngTuple>([0, 0]);
+  const [initialPosition, setInitialPosition] = useState<LatLngTuple>([
+    -16.6956997,
+    -49.3743072,
+  ]);
 
   useEffect(() => {
     api.get('items').then((response) => {
@@ -46,7 +59,14 @@ const CreatePoint: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedUf == 0) {
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const { latitude, longitude } = pos.coords;
+      setInitialPosition([latitude, longitude]);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (selectedUf === 0) {
       setCities([]);
       return;
     }
@@ -65,6 +85,52 @@ const CreatePoint: React.FC = () => {
     setSelectedCity(Number(city));
   };
 
+  const handleMapClick = (event: LeafletMouseEvent) => {
+    setSelectedPosition([event.latlng.lat, event.latlng.lng]);
+  };
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSelectItem = (itemId: number) => {
+    const indexExist = selectedItems.indexOf(itemId);
+    if (indexExist >= 0) {
+      setSelectedItems(selectedItems.filter((id) => id !== itemId));
+    } else {
+      setSelectedItems([...selectedItems, itemId]);
+    }
+  };
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    const { name, email, whatsapp } = formData;
+    const city = selectedCity;
+    const items = [...selectedItems];
+    const [latitude, longitude] = selectedPosition;
+
+    const data = {
+      name,
+      email,
+      whatsapp,
+      latitude,
+      longitude,
+      city,
+      items,
+    };
+
+    api.post('points', data).then((response) => {
+      if (response && response.status === 200) {
+        alert('Ponto de coleta criado com sucesso');
+        console.log(JSON.stringify(response.data));
+        history.push('/');
+      } else {
+        alert('Erro ao criar um novo ponto de coleta');
+      }
+    });
+  };
+
   return (
     <div id="page-create-point">
       <Header>
@@ -74,7 +140,7 @@ const CreatePoint: React.FC = () => {
         </Link>
       </Header>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <h1>
           Cadastro do <br /> ponto de coleta
         </h1>
@@ -86,18 +152,33 @@ const CreatePoint: React.FC = () => {
 
           <div className="field">
             <label htmlFor="name">Nome da entidade</label>
-            <input type="text" name="name" id="name" />
+            <input
+              type="text"
+              name="name"
+              id="name"
+              onChange={handleInputChange}
+            />
           </div>
 
           <div className="field-group">
             <div className="field">
               <label htmlFor="email">E-mail</label>
-              <input type="email" name="email" id="email" />
+              <input
+                type="email"
+                name="email"
+                id="email"
+                onChange={handleInputChange}
+              />
             </div>
 
             <div className="field">
               <label htmlFor="whatsapp">Whatsapp</label>
-              <input type="text" name="whatsapp" id="whatsapp" />
+              <input
+                type="text"
+                name="whatsapp"
+                id="whatsapp"
+                onChange={handleInputChange}
+              />
             </div>
           </div>
         </fieldset>
@@ -108,12 +189,12 @@ const CreatePoint: React.FC = () => {
             <span>Selecione o endereço no mapa</span>
           </legend>
 
-          <Map center={[-16.7405827, -49.2537338]} zoom={15}>
+          <Map center={initialPosition} zoom={12} onClick={handleMapClick}>
             <TileLayer
               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            <Marker position={[-16.7405827, -49.2537338]} />
+            <Marker position={selectedPosition} />
           </Map>
 
           <div className="field-group">
@@ -126,7 +207,7 @@ const CreatePoint: React.FC = () => {
                 onChange={handleSelectState}
               >
                 <option value="0">Selecione uma UF</option>
-                {states.map((state) => (
+                {states.map((state: State) => (
                   <option key={state.id} value={state.id}>
                     {state.uf}
                   </option>
@@ -161,7 +242,11 @@ const CreatePoint: React.FC = () => {
 
           <ul className="items-grid">
             {items.map((item: Item) => (
-              <li key={item.id} className={item.selected ? 'selected' : ''}>
+              <li
+                key={item.id}
+                className={selectedItems.includes(item.id) ? 'selected' : ''}
+                onClick={() => handleSelectItem(item.id)}
+              >
                 <img src={item.url} alt={item.title} />
                 <span>{item.title}</span>
               </li>
