@@ -1,13 +1,14 @@
 import React from 'react';
-import { Background } from '../../components/Background';
-import { Container, Hello } from './styles';
+import { Image } from 'react-native';
+import { Hello } from './styles';
+
+import logo from '../../assets/logo.png';
 
 export default function Main() {
   return (
-    <Background>
-      <Container>
-        <Hello>HELLO APP BLANK</Hello>
-      </Container>
-    </Background>
+    <>
+      <Image source={logo} />
+      <Hello>HELLO APP BLANK</Hello>
+    </>
   );
 }
