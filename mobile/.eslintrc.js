@@ -7,8 +7,10 @@ module.exports = {
     'prettier',
     'prettier/react',
     'plugin:react/recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     'prettier/@typescript-eslint',
+    'eslint-config-prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -53,6 +55,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
   },
   settings: {
+    react: { version: 'detect' },
     'import/resolver': {
       typescript: {},
       'babel-plugin-root-import': {

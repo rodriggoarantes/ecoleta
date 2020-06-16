@@ -1,10 +1,10 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-export default function Points() {
+export default function Detail() {
   return (
     <>
-      <Text>HELLO POINTS</Text>
+      <Text>HELLO DETAIL</Text>
     </>
   );
 }
