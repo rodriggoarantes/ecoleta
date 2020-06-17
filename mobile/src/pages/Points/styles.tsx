@@ -2,6 +2,10 @@ import styled from 'styled-components/native';
 import Constants from 'expo-constants';
 import MapComponent, { Marker } from 'react-native-maps';
 
+interface ItemSelect {
+  readonly isSelected: boolean;
+}
+
 export const Container = styled.View`
   flex: 1;
   padding: 0px 32px;
@@ -69,10 +73,12 @@ export const ItemsContainer = styled.View`
   margin-bottom: 32px;
 `;
 
-export const Item = styled.TouchableOpacity`
+export const Item = styled.TouchableOpacity.attrs({
+  activeOpacity: 0.6,
+})<ItemSelect>`
   background-color: #fff;
   border-width: 2px;
-  border-color: #eee;
+  border-color: ${(props) => (props.isSelected ? '#34cb79' : '#eee')};
   height: 120px;
   width: 120px;
   border-radius: 8px;
@@ -81,11 +87,6 @@ export const Item = styled.TouchableOpacity`
   align-items: center;
   justify-content: space-between;
   text-align: center;
-`;
-
-export const SelectedItem = styled.View`
-  border-color: #34cb79;
-  border-width: 2px;
 `;
 
 export const ItemTitle = styled.Text`
