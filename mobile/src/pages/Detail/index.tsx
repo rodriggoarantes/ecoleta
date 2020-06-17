@@ -1,5 +1,17 @@
 import React from 'react';
-import { Container, PointImage, PointName, PointItems } from './styles';
+import { FontAwesome, Feather } from '@expo/vector-icons';
+import {
+  Container,
+  PointImage,
+  PointName,
+  PointItems,
+  Address,
+  AddressTitle,
+  AddressContent,
+  Footer,
+  Button,
+  BtnText,
+} from './styles';
 
 import BackButton from '../../components/BackButton';
 
@@ -18,7 +30,24 @@ const Detail = () => {
 
         <PointName>Mercadao do Rodrigo</PointName>
         <PointItems>Lampadas, Oleo, Etc</PointItems>
+
+        <Address>
+          <AddressTitle>Endereço</AddressTitle>
+          <AddressContent>Aparecida de Goiania, GO</AddressContent>
+        </Address>
       </Container>
+
+      <Footer>
+        <Button>
+          <FontAwesome name="whatsapp" size={20} color="#FFF" />
+          <BtnText>Whatsapp</BtnText>
+        </Button>
+
+        <Button>
+          <Feather name="mail" size={20} color="#FFF" />
+          <BtnText>E-mail</BtnText>
+        </Button>
+      </Footer>
     </>
   );
 };

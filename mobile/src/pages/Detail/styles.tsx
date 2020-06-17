@@ -5,7 +5,7 @@ import { RectButton } from 'react-native-gesture-handler';
 export const Container = styled.View`
   flex: 1;
   padding: 0px 32px;
-  padding-top: ${() => 20 + Constants.statusBarHeight + 'px'};
+  padding-top: ${() => 4 + Constants.statusBarHeight + 'px'};
 `;
 
 export const PointImage = styled.Image`
@@ -32,11 +32,12 @@ export const PointItems = styled.Text`
   color: #6c6c80;
 `;
 
-export const Address = styled.Text`
+export const Address = styled.View`
   margin-top: 32px;
 `;
 
 export const AddressTitle = styled.Text`
+  color: #322153;
   font-family: 'Roboto_500Medium';
   font-size: 16px;
 `;

@@ -5,7 +5,7 @@ import MapComponent, { Marker } from 'react-native-maps';
 export const Container = styled.View`
   flex: 1;
   padding: 0px 32px;
-  padding-top: ${() => 8 + Constants.statusBarHeight + 'px'};
+  padding-top: ${() => 4 + Constants.statusBarHeight + 'px'};
 `;
 
 export const Title = styled.Text`
