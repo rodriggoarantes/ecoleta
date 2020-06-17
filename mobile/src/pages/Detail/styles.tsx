@@ -1,9 +1,16 @@
 import styled from 'styled-components/native';
+import Constants from 'expo-constants';
 import { RectButton } from 'react-native-gesture-handler';
 
-export const PointImage = styled.View`
-  height: 60px;
-  width: 60px;
+export const Container = styled.View`
+  flex: 1;
+  padding: 0px 32px;
+  padding-top: ${() => 20 + Constants.statusBarHeight + 'px'};
+`;
+
+export const PointImage = styled.Image`
+  width: 100%;
+  height: 120px;
   resize-mode: cover;
   border-radius: 10px;
   margin-top: 32px;

@@ -1,12 +1,12 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Feather as Icon } from '@expo/vector-icons';
 import { SvgUri } from 'react-native-svg';
+
+import BackButton from '../../components/BackButton';
 
 import {
   Container,
-  Back,
   Title,
   Description,
   MapContainer,
@@ -24,10 +24,6 @@ import content from './content';
 
 const Points: React.FC = () => {
   const navigation = useNavigation();
-  const handleBack = () => {
-    navigation.goBack();
-  };
-
   const handleNavigateDetail = () => {
     navigation.navigate('Detail');
   };
@@ -35,10 +31,7 @@ const Points: React.FC = () => {
   return (
     <>
       <Container>
-        <Back onPress={handleBack}>
-          <Icon name="arrow-left" size={20} color="#34cb79" />
-        </Back>
-
+        <BackButton />
         <Title>{content.title}</Title>
         <Description>{content.description}</Description>
 

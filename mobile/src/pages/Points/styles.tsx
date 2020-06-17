@@ -8,8 +8,6 @@ export const Container = styled.View`
   padding-top: ${() => 8 + Constants.statusBarHeight + 'px'};
 `;
 
-export const Back = styled.TouchableOpacity``;
-
 export const Title = styled.Text`
   font-size: 20px;
   font-family: 'Ubuntu_700Bold';

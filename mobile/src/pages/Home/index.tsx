@@ -15,7 +15,7 @@ import {
 
 import content from './content';
 
-export default function Home() {
+const Home = () => {
   const navigation = useNavigation();
 
   const handleNavigate = () => {
@@ -37,4 +37,6 @@ export default function Home() {
       </Button>
     </Container>
   );
-}
+};
+
+export default Home;
