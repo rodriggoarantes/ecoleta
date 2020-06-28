@@ -9,7 +9,7 @@ interface ItemSelect {
 export const Container = styled.View`
   flex: 1;
   padding: 0px 32px;
-  padding-top: ${() => 4 + Constants.statusBarHeight + 'px'};
+  padding-top: ${() => 2 + Constants.statusBarHeight + 'px'};
 `;
 
 export const Title = styled.Text`
@@ -74,7 +74,7 @@ export const ItemsContainer = styled.View`
 `;
 
 export const Item = styled.TouchableOpacity.attrs({
-  activeOpacity: 0.6,
+  activeOpacity: 0.4,
 })<ItemSelect>`
   background-color: #fff;
   border-width: 2px;

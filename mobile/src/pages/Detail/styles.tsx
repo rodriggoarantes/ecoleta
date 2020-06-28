@@ -5,7 +5,7 @@ import { RectButton } from 'react-native-gesture-handler';
 export const Container = styled.View`
   flex: 1;
   padding: 0px 32px;
-  padding-top: ${() => 4 + Constants.statusBarHeight + 'px'};
+  padding-top: ${() => 2 + Constants.statusBarHeight + 'px'};
 `;
 
 export const PointImage = styled.Image`

@@ -3,7 +3,7 @@ import City from './City';
 import State from './State';
 
 class LocationService {
-  async findById(id: number) {
+  async findCityById(id: number) {
     return knex.from<City>('cities').where('id', id).first();
   }
 
@@ -27,6 +27,10 @@ class LocationService {
       .where('states.uf', 'like', uf)
       .select()
       .first();
+  }
+
+  async findStateById(id: number) {
+    return knex.from<State>('states').where('id', id).first();
   }
 
   async listStates(): Promise<Array<State>> {

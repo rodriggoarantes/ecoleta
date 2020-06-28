@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SvgUri } from 'react-native-svg';
+import * as Location from 'expo-location';
 
 import BackButton from '../../components/BackButton';
 
@@ -29,14 +30,27 @@ interface Item {
   url: string;
 }
 
+interface Point {
+  id: number;
+  name: string;
+  image: string;
+  latitude: number;
+  longitude: number;
+}
+
 const Points: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
+  const [points, setPoints] = useState<Point[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [initialPosition, setInitialPosition] = useState<[number, number]>([
+    0,
+    0,
+  ]);
 
   const navigation = useNavigation();
 
-  const handleNavigateDetail = () => {
-    navigation.navigate('Detail');
+  const handleNavigateDetail = (id: number) => {
+    navigation.navigate('Detail', { point_id: id });
   };
 
   const handleSelectItem = (itemId: number) => {
@@ -54,6 +68,37 @@ const Points: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    async function loadPosition() {
+      const { status } = await Location.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Ooops...',
+          'Precisamos de sua permissão para obter a localização'
+        );
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync();
+      const { latitude, longitude } = location.coords;
+      setInitialPosition([latitude, longitude]);
+    }
+    loadPosition();
+  }, []);
+
+  useEffect(() => {
+    api
+      .get('points', {
+        params: {
+          uf: 'GO',
+          city_id: 1,
+          items: [1, 4],
+        },
+      })
+      .then((response) => {
+        setPoints(response.data);
+      });
+  }, []);
+
   return (
     <>
       <Container>
@@ -62,29 +107,32 @@ const Points: React.FC = () => {
         <Description>{content.description}</Description>
 
         <MapContainer>
-          <MapView
-            initialRegion={{
-              latitude: -16.7411712,
-              longitude: -49.2633359,
-              latitudeDelta: 0.014,
-              longitudeDelta: 0.014,
-            }}
-          >
-            <MapMarker
-              coordinate={{ latitude: -16.7411712, longitude: -49.2633359 }}
-              onPress={handleNavigateDetail}
+          {initialPosition[0] !== 0 && (
+            <MapView
+              initialRegion={{
+                latitude: initialPosition[0],
+                longitude: initialPosition[1],
+                latitudeDelta: 0.014,
+                longitudeDelta: 0.014,
+              }}
             >
-              <MapMarkerContainer>
-                <MapMarkerImage
-                  source={{
-                    uri:
-                      'https://www.mercadoeconsumo.com.br/wp-content/uploads/2018/07/Carrefour-inaugura-unidade-Market-na-Praia-Grande.jpg',
+              {points.map((point) => (
+                <MapMarker
+                  key={String(point.id)}
+                  coordinate={{
+                    latitude: point.latitude,
+                    longitude: point.longitude,
                   }}
-                />
-                <MapMarkerTitle>Mercado</MapMarkerTitle>
-              </MapMarkerContainer>
-            </MapMarker>
-          </MapView>
+                  onPress={() => handleNavigateDetail(point.id)}
+                >
+                  <MapMarkerContainer>
+                    <MapMarkerImage source={{ uri: point.image }} />
+                    <MapMarkerTitle>{point.name}</MapMarkerTitle>
+                  </MapMarkerContainer>
+                </MapMarker>
+              ))}
+            </MapView>
+          )}
         </MapContainer>
       </Container>
       <ItemsContainer>

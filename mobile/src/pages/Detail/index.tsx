@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRoute } from '@react-navigation/native';
 import { FontAwesome, Feather } from '@expo/vector-icons';
 import {
   Container,
@@ -15,25 +16,62 @@ import {
 
 import BackButton from '../../components/BackButton';
 
+import api from '../../services/api';
+
+interface Data {
+  point: {
+    image: string;
+    name: string;
+    email: string;
+    whatsapp: string;
+    city: {
+      name: string;
+    };
+    state: {
+      uf: string;
+    };
+  };
+  items: {
+    title: string;
+  }[];
+}
+interface RouteParam {
+  point_id: number;
+}
+
 const Detail = () => {
+  const [data, setData] = useState<Data>({} as Data);
+
+  const route = useRoute();
+  const routeParams: RouteParam = route.params as RouteParam;
+
+  useEffect(() => {
+    api
+      .get(`points/${routeParams.point_id}`)
+      .then((response) => setData(response.data));
+  }, []);
+
+  // TODO loading
+  if (!data || !data.point) {
+    return null;
+  }
+
   return (
     <>
       <Container>
         <BackButton />
+        <PointImage source={{ uri: data.point.image }} />
 
-        <PointImage
-          source={{
-            uri:
-              'https://www.mercadoeconsumo.com.br/wp-content/uploads/2018/07/Carrefour-inaugura-unidade-Market-na-Praia-Grande.jpg',
-          }}
-        />
-
-        <PointName>Mercadao do Rodrigo</PointName>
-        <PointItems>Lampadas, Oleo, Etc</PointItems>
+        <PointName>{data.point.name}</PointName>
+        <PointItems>
+          {data.items.map((item) => item.title).join(', ')}
+        </PointItems>
 
         <Address>
           <AddressTitle>Endereço</AddressTitle>
-          <AddressContent>Aparecida de Goiania, GO</AddressContent>
+          <AddressContent>
+            {data.point.city.name}, {data.point.state.uf}
+          </AddressContent>
         </Address>
       </Container>
 
