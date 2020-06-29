@@ -74,3 +74,5 @@ export const BtnText = styled.Text`
   font-family: 'Roboto_500Medium';
   font-size: 18px;
 `;
+
+export const Footer = styled.View``;

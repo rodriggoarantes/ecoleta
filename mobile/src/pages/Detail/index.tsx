@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { Linking } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { FontAwesome, Feather } from '@expo/vector-icons';
+import * as MailComposer from 'expo-mail-composer';
 import {
   Container,
   PointImage,
@@ -15,6 +17,7 @@ import {
 } from './styles';
 
 import BackButton from '../../components/BackButton';
+import Loading from '../../components/Loading';
 
 import api from '../../services/api';
 
@@ -51,9 +54,21 @@ const Detail = () => {
       .then((response) => setData(response.data));
   }, []);
 
-  // TODO loading
+  const handleComposeMail = () => {
+    MailComposer.composeAsync({
+      subject: 'Interesse na coleta',
+      recipients: [data.point.email],
+    });
+  };
+
+  const handleWhatsapp = () => {
+    Linking.openURL(
+      `whatsapp://send?phone=${data.point.whatsapp}&text=Interesse em coleta`
+    );
+  };
+
   if (!data || !data.point) {
-    return null;
+    return <Loading />;
   }
 
   return (
@@ -76,12 +91,12 @@ const Detail = () => {
       </Container>
 
       <Footer>
-        <Button>
+        <Button onPress={handleWhatsapp}>
           <FontAwesome name="whatsapp" size={20} color="#FFF" />
           <BtnText>Whatsapp</BtnText>
         </Button>
 
-        <Button>
+        <Button onPress={handleComposeMail}>
           <Feather name="mail" size={20} color="#FFF" />
           <BtnText>E-mail</BtnText>
         </Button>
