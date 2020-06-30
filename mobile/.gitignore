@@ -83,6 +83,9 @@ lib/
 
 node_modules/**/*
 .expo/*
+.expo/
+.expo-shared
+
 npm-debug.*
 *.jks
 *.p8
@@ -95,6 +98,5 @@ web-report/
 
 # macOS
 .DS_Store
-
 
 *.lock

@@ -63,3 +63,6 @@ yarn.lock
 
 # Build Productions
 build/
+
+.expo
+.expo-shared
