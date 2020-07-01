@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
-import Item from './Item';
+import Item from '../../models/Item';
 
 export interface Props {
   items: Array<Item>;
   setValue: Function;
+  value: any;
   placeholder?: string;
 }
 
@@ -15,6 +16,7 @@ const Dropdown: React.FC<Props> = (props) => {
       onValueChange={(value) => props.setValue(value)}
       items={props.items}
       style={pickerSelectStyles}
+      value={props.value}
       useNativeAndroidPickerStyle={false}
       placeholder={{
         ...placeholder,

@@ -16,41 +16,57 @@ import {
 import content from './content';
 
 import Dropdown from '../../components/Dropdown';
-import DropdownItem from '../../components/Dropdown/Item';
+import Item from '../../models/Item';
 
 import api from '../../services/api';
 
 const Home = () => {
-  const [cities, setCities] = useState<DropdownItem[]>([]);
-  const [states, setStates] = useState<DropdownItem[]>([]);
-  const [selectedCity, setSelectedCity] = useState<DropdownItem>(
-    {} as DropdownItem
-  );
-  const [selectedState, setSelectedState] = useState<DropdownItem>(
-    {} as DropdownItem
-  );
+  const [cities, setCities] = useState<Item[]>([]);
+  const [states, setStates] = useState<Item[]>([]);
+  const [selectedCity, setSelectedCity] = useState<Item>({} as Item);
+  const [selectedState, setSelectedState] = useState<Item>({} as Item);
   const navigation = useNavigation();
 
   const handleNavigate = () => {
-    navigation.navigate('Points');
+    navigation.navigate('Points', { state: selectedState, city: selectedCity });
   };
 
-  const handleSelectedState = (id: number) => {
-    console.log(`state: ${id}`);
+  const handleSelectedState = (value: number) => {
+    setCities([]);
+    setSelectedCity({ value: null } as Item);
+
+    if (value) {
+      setSelectedState(
+        states.find((item: Item) => item.value === value) || ({} as Item)
+      );
+    }
   };
 
-  const handleSelectedCity = (id: number) => {
-    console.log(`city: ${id}`);
+  const handleSelectedCity = (value: number) => {
+    if (value) {
+      setSelectedCity(
+        cities.find((item: Item) => item.value === value) || ({} as Item)
+      );
+    }
   };
 
   useEffect(() => {
     api.get(`states`).then((response) => {
       const stateItems = response.data.map(
-        (state: any) => ({ label: state.uf, value: state.id } as DropdownItem)
+        (state: any) => ({ label: state.uf, value: state.id } as Item)
       );
       setStates(stateItems);
     });
   }, []);
+
+  useEffect(() => {
+    api.get(`/cities/states/${selectedState.value}`).then((response) => {
+      const citiesItems = response.data.map(
+        (city: any) => ({ label: city.name, value: city.id } as Item)
+      );
+      setCities(citiesItems);
+    });
+  }, [selectedState]);
 
   return (
     <Container>
@@ -63,11 +79,13 @@ const Home = () => {
         <Dropdown
           placeholder="Selecione um estado"
           items={states}
+          value={selectedState.value}
           setValue={handleSelectedState}
         />
         <Dropdown
           placeholder="Selecione uma cidade"
           items={cities}
+          value={selectedCity.value}
           setValue={handleSelectedCity}
         />
         <Button onPress={handleNavigate}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { SvgUri } from 'react-native-svg';
 import * as Location from 'expo-location';
 
@@ -22,6 +22,7 @@ import {
 } from './styles';
 
 import api from './../../services/api';
+import RouteItem from '../../models/Item';
 import content from './content';
 
 interface Item {
@@ -38,7 +39,12 @@ interface Point {
   longitude: number;
 }
 
-const Points: React.FC = () => {
+interface RouteParam {
+  state: RouteItem;
+  city: RouteItem;
+}
+
+const Points = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [points, setPoints] = useState<Point[]>([]);
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
@@ -48,6 +54,8 @@ const Points: React.FC = () => {
   ]);
 
   const navigation = useNavigation();
+  const route = useRoute();
+  const routeParams: RouteParam = route.params as RouteParam;
 
   const handleNavigateDetail = (id: number) => {
     navigation.navigate('Detail', { point_id: id });
@@ -89,15 +97,15 @@ const Points: React.FC = () => {
     api
       .get('points', {
         params: {
-          uf: 'GO',
-          city_id: 1,
-          items: [1, 4],
+          uf: routeParams.state.label,
+          city_id: routeParams.city.value,
+          items: selectedItems,
         },
       })
       .then((response) => {
         setPoints(response.data);
       });
-  }, []);
+  }, [selectedItems]);
 
   return (
     <>
