@@ -16,7 +16,7 @@ class CityController {
 
   async show(req: Request, res: Response) {
     const { id } = req.params;
-    return res.json(await locationService.findById(Number(id)));
+    return res.json(await locationService.findCityById(Number(id)));
   }
 }
 
