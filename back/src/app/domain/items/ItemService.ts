@@ -2,15 +2,16 @@ import knex from './../../../database/connection';
 import Item from './Item';
 
 class ItemService {
+  private readonly urlApp: string =
+    process.env.APP_URL || 'http://localhost:3333';
+
   async list(): Promise<Array<Item>> {
     const items: Array<Item> = await knex('items').select('*');
-
-    const url = 'http://localhost:3333';
 
     return items.map((item) => {
       return <Item>{
         ...item,
-        url: `${url}/uploads/${item.image}`,
+        url: `${this.urlApp}/uploads/${item.image}`,
       };
     });
   }

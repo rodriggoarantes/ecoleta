@@ -1,3 +1,14 @@
+## Compiled JavaScript files
+**/*.js
+**/*.js.map
+
+# Typescript v1 declaration files
+typings/
+
+node_modules/
+
+.runtimeconfig.json
+
 # Logs
 logs
 *.log
@@ -53,7 +64,6 @@ typings/
 
 # Yarn Integrity file
 .yarn-integrity
-yarn.lock
 
 # dotenv environment variables file
 .env
@@ -61,8 +71,32 @@ yarn.lock
 # next.js build output
 .next
 
-# Build Productions
-build/
+yarn.lock
 
-.expo
+tmp/
+
+functions/code
+
+lib/
+
+.vscode/
+
+node_modules/**/*
+.expo/*
+.expo/
 .expo-shared
+
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+web-report/
+
+# macOS
+.DS_Store
+
+*.lock

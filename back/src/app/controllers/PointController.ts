@@ -7,6 +7,7 @@ import locationService from './../domain/location/LocationService';
 
 import Point from './../domain/points/Point';
 import City from './../domain/location/City';
+import State from '../domain/location/State';
 
 class PointController {
   async index(req: Request, res: Response) {
@@ -14,7 +15,8 @@ class PointController {
 
     let cityObj: City = <City>{};
     if (city_id) {
-      cityObj = (await locationService.findById(Number(city_id))) || <City>{};
+      cityObj =
+        (await locationService.findCityById(Number(city_id))) || <City>{};
     }
     if (!cityObj.id) {
       cityObj = await locationService.findByNames(String(city), String(uf));
@@ -82,7 +84,10 @@ class PointController {
     }
 
     const items = await itemService.listByPoint(point.id);
-    return res.json({ point, items });
+    const city = (await locationService.findCityById(point.city)) || <City>{};
+    const state = await locationService.findStateById(city.state_id);
+
+    return res.json({ point: { ...point, city, state }, items });
   }
 }
 
